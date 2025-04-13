@@ -1,0 +1,42 @@
+
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>星巴克飲品單字卡練習</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f5f5f5; text-align: center; padding: 30px; }
+        .card { background: white; max-width: 600px; margin: auto; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.2); }
+        button { margin: 10px; padding: 10px 20px; font-size: 16px; border: none; border-radius: 5px; background-color: #00704a; color: white; cursor: pointer; }
+        button:hover { background-color: #005d3a; }
+        .answer { margin-top: 20px; font-size: 16px; color: #333; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2 id="question">請按「下一題」開始</h2>
+    <div class="answer" id="answer" style="display:none;"></div>
+    <button onclick="showAnswer()">顯示配方步驟</button>
+    <button onclick="nextCard()">下一題</button>
+</div>
+
+<script>
+    const cards = [["每日精選咖啡\nBrewed Coffee", "1. （如顧客要求）加入風味糖漿和蔗糖糖漿\n2. 倒入咖啡至杯緣下6mm；若需加牛奶，倒至12mm"], ["冰每日精選咖啡\nIced Brewed Coffee", "1. （如顧客要求）加入風味糖漿和蔗糖糖漿\n2. 倒入冰咖啡至標線\n3. 加入冰塊至離杯緣6mm"], ["咖啡密斯朵\nCaffè Misto", "1. 蒸煮牛奶（充氣1–3秒）\n2. （如顧客要求）加入風味糖漿與蔗糖糖漿\n3. 倒入每日精選咖啡至半杯\n4. 倒入蒸奶至杯緣下12mm，奶泡6mm"], ["冰咖啡密斯朵\nIced Caffè Misto", "1. （如顧客要求）加入風味糖漿與蔗糖糖漿\n2. 加入冰咖啡至下標線\n3. 加牛奶至上標線\n4. 加冰塊至杯緣下6mm"], ["冷萃咖啡\nCold Brew Coffee", "1. （如顧客要求）加入風味糖漿與蔗糖糖漿\n2. 注入冷萃濃縮液至下標線\n3. 加水至上標線\n4. 加冰塊至杯緣下6mm"], ["冷萃咖啡（去冰）\nCold Brew No Ice", "1. （如顧客要求）加入糖漿\n2. 加入冷萃濃縮液至下標線\n3. 加水至離杯緣6mm"], ["冷萃咖啡（少冰）\nCold Brew Light Ice", "1. （如顧客要求）加入糖漿\n2. 加入冷萃濃縮液至下標線\n3. 加水至離杯緣12mm\n4. 加冰塊至杯緣下6mm"], ["冷萃咖啡加牛奶\nCold Brew with Milk", "1. （如顧客要求）加入糖漿\n2. 加入濃縮液至下標線\n3. 加水至中標線\n4. 加牛奶至上標線\n5. 加冰塊至杯緣下6mm"], ["冷萃咖啡去冰加牛奶\nNo Ice Cold Brew with Milk", "1. 加入濃縮液至下標線\n2. 加水至上標線\n3. 加牛奶至杯緣下6mm"], ["冷萃咖啡（Tap）\nCold Brew (Tap)", "1. （如顧客要求）加入糖漿\n2. 從 Tap 注入冷萃咖啡至上標線\n3. 加冰塊至杯緣下6mm"], ["經典特調冷萃咖啡\nVanilla Sweet Cream Cold Brew", "1. 加香草糖漿與蔗糖\n2. 注入濃縮液至下標線\n3. 加水至上標線\n4. 加冰塊至12mm下\n5. 加入30ml甜香草奶油（不需攪拌）"], ["經典特調冷萃咖啡（Tap）\nVanilla Sweet Cream Cold Brew (Tap)", "1. 加香草糖漿與蔗糖\n2. Tap 注入冷萃至上標線\n3. 加冰塊至12mm下\n4. 加入30ml香草奶油"], ["鹹焦糖風味綿雲冷萃\nSalted Caramel Cold Brew", "1. 製作 Cold Foam（鹹焦糖糖漿+蔗糖+牛奶打發）\n2. 加糖漿後注入濃縮液至下標線\n3. 加水至上標線\n4. 加冰塊至12mm下\n5. 加入 Cold Foam 並畫焦糖棋盤"], ["香檸蜜柚冷萃\nCold Brew Lemonade with Ruby Grapefruit and Honey", "1. 加入蜂蜜紅柚醬 + 冰塊\n2. 搖杯中加糖漿、檸檬果汁、冷水搖勻\n3. 注入冷萃原液於冰塊上分層\n（限少冰、不建議甜度/冰塊調整）"], ["香檸蜜柚冷萃－少冰\nCold Brew Lemonade Light Ice", "與原配方相同，冰量較少，風味表現略淡\n製作步驟同上，需與顧客說明"], ["香檸蜜柚冷萃－去冰\nCold Brew Lemonade No Ice", "加入所有果醬與液體後直接注入冷萃\n加滿至杯緣，提醒顧客風味偏甜或偏酸"], ["夏日冰柚冷萃\nHoney Ruby Grapefruit Cold Brew", "1. 倒入檸檬液、紅柚醬與冰塊入攪拌壺\n2. 攪拌後倒入冰杯，加冷萃原液至下線\n3. 再倒入攪拌壺內容，加紅柚醬裝飾\n（不建議調整冰塊）"], ["松露巧克力冷萃\nChocolate Truffle Cold Brew", "1. 製作摩卡風味 Cold Foam\n2. 加鹹焦糖糖漿與蔗糖\n3. 注入冷萃濃縮液 → 加水 → 加冰塊\n4. 加 Cold Foam，灑可可粉"], ["氮氣冷萃咖啡\nNitro Cold Brew", "1. 從 Tap 注入氮氣冷萃至杯緣下6mm\n2. 蓋上氮氣飲品杯蓋"], ["氮氣冷萃歐蕾\nNitro Cold Brew with Milk", "1. Tap 注入氮氣冷萃至離杯緣2公分\n2. 加全脂牛奶至杯口"], ["經典特調氮氣冷萃\nNitro Cold Brew with Vanilla Sweet Cream", "1. 加香草糖漿與蔗糖\n2. Tap 注入氮氣冷萃至離杯緣12mm\n3. 加入30ml甜香草奶油（不攪拌）"], ["鹹焦糖風味綿雲氮氣冷萃\nSalted Caramel Nitro Cold Brew", "1. 製作鹹焦糖Cold Foam\n2. 加入糖漿與蔗糖後注入氮氣冷萃\n3. 加入 Cold Foam 並蓋上氮氣專用杯蓋"], ["松露巧克力氮氣冷萃\nChocolate Truffle Nitro Cold Brew", "1. 製作摩卡 Cold Foam\n2. 加鹹焦糖糖漿與蔗糖\n3. Tap 注入氮氣冷萃 → 加 Cold Foam\n4. 灑上可可粉"], ["美式咖啡\nCaffè Americano", "1. 準備濃縮咖啡（1–4 shots 視杯型）\n2. （如顧客要求）加入風味糖漿與蔗糖\n3. 注入熱水至杯緣下 6mm"], ["冰美式咖啡\nIced Caffè Americano", "1. 準備濃縮咖啡（2–4 shots）\n2. 加入糖漿與蔗糖（如顧客要求）\n3. 倒入冷水至標線，再加冰至杯緣下 6mm"], ["那堤\nCaffè Latte", "1. 蒸煮牛奶（充氣 1–3 秒）\n2. 準備濃縮咖啡（1–2 shots）\n3. （如顧客要求）加糖漿\n4. 倒入蒸奶至離杯緣 6mm，可拉花裝飾"], ["冰那堤\nIced Caffè Latte", "1. 準備濃縮咖啡（1–2 shots）\n2. 加入糖漿與蔗糖（如顧客要求）\n3. 加入冰牛奶至標線，加冰塊至杯緣下 6mm"], ["特選馥郁那堤\nEspresso Choice Latte", "1. 蒸煮牛奶（充氣 1–3 秒）\n2. 濃縮咖啡（T:2 G:3 V:3 shots）\n3. 注入牛奶與奶泡至杯緣下 6mm"], ["冰特選馥郁那堤\nIced Espresso Choice Latte", "1. 準備濃縮咖啡（T:2 G:3 V:3 shots）\n2. 倒入冰牛奶至標線\n3. 加入冰塊至杯緣下 6mm"], ["摩卡\nCaffè Mocha", "1. 蒸煮牛奶（至 Extra Hot）\n2. 準備濃縮咖啡（1–2 shots）\n3. 加入摩卡醬並與咖啡攪拌\n4. 注入蒸奶至 12mm，下層奶泡，上層鮮奶油"], ["冰摩卡\nIced Caffè Mocha", "1. 準備濃縮咖啡（1–2 shots）\n2. 加入摩卡醬，攪拌混和\n3. 加入冰牛奶至標線，加冰塊至 6mm\n4. 加上鮮奶油"], ["白巧克力那堤\nWhite Chocolate Mocha", "1. 蒸煮牛奶（至 Extra Hot）\n2. 加入白摩卡醬並與濃縮咖啡混合\n3. 注入蒸奶至 12mm，加入鮮奶油"], ["冰白巧克力那堤\nIced White Chocolate Mocha", "1. 準備濃縮咖啡，加入白摩卡醬\n2. 搖勻後加入冰牛奶至標線\n3. 加冰塊至 6mm，上方加鮮奶油"], ["焦糖瑪奇朵\nCaramel Macchiato", "1. 蒸奶至 3/4 杯並製作奶泡（12mm）\n2. 加入香草糖漿與蔗糖\n3. 注入濃縮咖啡穿透奶泡\n4. 淋上焦糖醬，畫出雙圓棋盤"], ["冰焦糖瑪奇朵\nIced Caramel Macchiato", "1. 加入香草糖漿與蔗糖\n2. 加入冰牛奶至標線，加冰塊至 12mm\n3. 注入濃縮咖啡並淋上焦糖醬"], ["可可瑪奇朵\nCocoa Macchiato", "1. 蒸奶至 3/4 杯並製作奶泡（12mm）\n2. 加入香草糖漿與蔗糖\n3. 注入濃縮咖啡，淋上摩卡淋醬畫棋盤"], ["冰可可瑪奇朵\nIced Cocoa Macchiato", "1. 加入香草糖漿與蔗糖\n2. 加入冰牛奶至標線\n3. 加冰塊至 12mm，注入濃縮咖啡\n4. 淋上摩卡淋醬"], ["那堤瑪奇朵\nLatte Macchiato", "1. 蒸奶至 3/4 杯，奶泡 12mm\n2. 注入濃縮咖啡穿透奶泡"], ["冰那堤瑪奇朵\nIced Latte Macchiato", "1. 加冰牛奶至標線，加冰塊至 12mm\n2. 注入濃縮咖啡"], ["卡布奇諾\nCappuccino", "1. 蒸奶（充氣 6–8 秒）形成豐富奶泡\n2. 注入濃縮咖啡（1–2 shots）\n3. 倒入奶泡至杯緣下 6mm"], ["濃縮咖啡\nEspresso", "1. 製作濃縮咖啡（1–2 shots）\n2. 可依顧客要求加糖漿\n3. 內用供馬克杯，外帶使用小杯"], ["濃縮康寶藍\nEspresso Con Panna", "1. 製作濃縮咖啡（1–2 shots）\n2. 上層加鮮奶油"], ["濃縮瑪奇朵\nEspresso Macchiato", "1. 製作濃縮咖啡（1–2 shots）\n2. 蒸奶製作奶泡，點綴於咖啡上"], ["馥列白\nFlat White", "1. 蒸奶至奶泡細緻\n2. 注入 Ristretto Shots（2–4 shots）\n3. 注入牛奶至杯中，最後製作小圓點"], ["冰馥列白\nIced Flat White", "1. 注入 Ristretto Shots 至杯中\n2. 加入冰牛奶至標線\n3. 加入冰塊至 6mm"], ["雲朵冰搖濃縮咖啡\nCold Foam Iced Espresso", "1. 製作 Cold Foam（低脂牛奶打發）\n2. 將糖漿、濃縮咖啡、冰塊加入搖杯搖 10 下\n3. 加入冰塊與奶泡，再倒入搖杯內容"]];
+
+    let current = -1;
+
+    function showAnswer() {
+        document.getElementById("answer").style.display = "block";
+    }
+
+    function nextCard() {
+        current = Math.floor(Math.random() * cards.length);
+        document.getElementById("question").innerText = cards[current][0];
+        document.getElementById("answer").innerText = cards[current][1];
+        document.getElementById("answer").style.display = "none";
+    }
+</script>
+
+</body>
+</html>
